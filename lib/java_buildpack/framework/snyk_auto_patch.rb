@@ -37,16 +37,15 @@ module JavaBuildpack
       # (see JavaBuildpack::Component::BaseComponent#compile)
       # This is to change the FS
       def compile
-        config_path = @droplet.root + 'META-INF/.snyk'
-        if File.exist?(config_path)
-          config = YAML.load_file(config_path)
-          config["patch"].keys.each do |key|
-            jar_to_patch = config["patch"][key]["patch"]
-            puts jar_to_patch
-            download_jar(jar_name=jar_to_patch)
-            FileUtils.remove_file  @droplet.root + 'WEB-INF/lib/' + jar_to_patch
-            @droplet.additional_libraries << (@droplet.sandbox + jar_to_patch)
-          end
+        uri = URI(@configuration['repository_root'] + '/snyk.config')
+        config_data = Net::HTTP.get(uri)
+        config = YAML.load(config_data)
+        config["patch"].keys.each do |key|
+          jar_to_patch = config["patch"][key]["patch"]
+          puts jar_to_patch
+          download_jar(jar_name=jar_to_patch)
+          FileUtils.remove_file  @droplet.root + 'WEB-INF/lib/' + jar_to_patch
+          @droplet.additional_libraries << (@droplet.sandbox + jar_to_patch)
         end
       end
 
