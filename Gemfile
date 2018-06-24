@@ -10,5 +10,5 @@ group :development do
   gem 'tee'
   gem 'terminal-table'
   gem 'webmock'
-  gem 'yard'
+  gem 'yard', '>= 0.9.11'
 end
